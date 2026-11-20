@@ -1,0 +1,62 @@
+{
+  "airi_exe": {
+    "description": "桌宠程序 airi.exe 的位置",
+    "type": "string",
+    "hint": "留空 = 自动找（插件自己下载的；装过 DSH 版 blue whale 的话也会用那边的），一般不用填",
+    "default": ""
+  },
+  "auto_download_pet": {
+    "description": "没有桌宠程序时自动下载",
+    "type": "bool",
+    "hint": "约 485MB，只下一次：先从 Gitee 下（国内不用梯子），不行再从 GitHub 下，下完会核对文件",
+    "default": true
+  },
+  "auto_launch_pet": {
+    "description": "AstrBot 启动时打开桌宠",
+    "type": "bool",
+    "default": true
+  },
+  "close_pet_on_exit": {
+    "description": "AstrBot 关掉时一起关掉桌宠",
+    "type": "bool",
+    "default": true
+  },
+  "attach_rules": {
+    "description": "和桌宠说话时附上桌宠规则（表情动作、换装、跳舞的写法）",
+    "type": "bool",
+    "hint": "规则写进系统提示词，不进对话记录；QQ 等别的平台不受影响",
+    "default": true
+  },
+  "rules_file": {
+    "description": "自己的桌宠规则文件（.md）",
+    "type": "string",
+    "hint": "留空 = 用 data\\plugin_data\\astrbot_plugin_bluewhale\\桌宠规则.md，没有就用插件自带的。改完下一句就生效",
+    "default": ""
+  },
+  "split_bubbles": {
+    "description": "分段回复一段一个气泡",
+    "type": "bool",
+    "hint": "开：AstrBot 分段回复时，第一段马上念，后面的一段一段冒出来；关：等全部分段发完，合成一个气泡",
+    "default": true
+  },
+  "timeout_seconds": {
+    "description": "等角色回复最多几秒",
+    "type": "int",
+    "default": 180
+  },
+  "fallback_reply": {
+    "description": "出错时桌宠说的话",
+    "type": "string",
+    "default": "我刚刚走神了，你再说一遍？"
+  },
+  "idle_motions": {
+    "description": "回复没写动作时补的说话动作（* 是通配符，桌宠随机挑）",
+    "type": "list",
+    "default": ["Animation/正常说话-*.motion3.json"]
+  },
+  "outfit_motions": {
+    "description": "换装用动作代替表情（衣服才能一直保持）",
+    "type": "bool",
+    "default": true
+  }
+}
