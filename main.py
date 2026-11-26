@@ -60,6 +60,11 @@ class BlueWhale(Star):
             timeout=int(config.get("timeout_seconds", 180)),
             fallback_reply=config.get("fallback_reply") or "我刚刚走神了，你再说一遍？",
             split_bubbles=bool(config.get("split_bubbles", True)),
+            tts_enabled=bool(config.get("tts_enabled", False)),
+            tts_api_key=(config.get("tts_api_key") or "").strip(),
+            tts_host=(config.get("tts_host") or "").strip(),
+            tts_model=(config.get("tts_model") or "cosyvoice-v3.5-flash").strip(),
+            tts_voice=(config.get("tts_voice") or "").strip(),
         )
 
     async def initialize(self) -> None:

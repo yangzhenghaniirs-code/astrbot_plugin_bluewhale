@@ -52,11 +52,43 @@
   "idle_motions": {
     "description": "回复没写动作时补的说话动作（* 是通配符，桌宠随机挑）",
     "type": "list",
-    "default": ["Animation/正常说话-*.motion3.json"]
+    "default": [
+      "Animation/正常说话-*.motion3.json"
+    ]
   },
   "outfit_motions": {
     "description": "换装用动作代替表情（衣服才能一直保持）",
     "type": "bool",
     "default": true
+  },
+  "tts_enabled": {
+    "description": "语音合成：用百炼 CosyVoice（可用克隆音色）",
+    "type": "bool",
+    "hint": "开了以后，桌宠里把语音合成选成「OpenAI 兼容 TTS」，地址填 http://127.0.0.1:18100/v1/ ，Key 随便填。合成在百炼云端做，不占电脑算力",
+    "default": false
+  },
+  "tts_api_key": {
+    "description": "百炼 API Key",
+    "type": "string",
+    "hint": "在百炼控制台 API-KEY 页面创建（sk-ws- 开头）。注意：这里填 Key，不是音色 ID",
+    "default": ""
+  },
+  "tts_host": {
+    "description": "百炼接入域名（业务空间域名）",
+    "type": "string",
+    "hint": "百炼控制台右上角「默认业务空间」里的 API Host，形如 ws-xxxx.cn-beijing.maas.aliyuncs.com。sk-ws- 开头的 Key 必须填这个；用通用 Key 的话留空",
+    "default": ""
+  },
+  "tts_model": {
+    "description": "语音合成模型",
+    "type": "string",
+    "hint": "必须和创建音色时用的模型一致（音色 ID 前缀里有写），比如 cosyvoice-v3.5-flash",
+    "default": "cosyvoice-v3.5-flash"
+  },
+  "tts_voice": {
+    "description": "音色 ID",
+    "type": "string",
+    "hint": "百炼「体验中心 → 语音模型 → 音色复刻」里，音色名字旁边的 ID 图标可以复制，形如 cosyvoice-v3.5-flash-bailian-xxxx",
+    "default": ""
   }
 }

@@ -1,6 +1,6 @@
 # 桌宠程序（AIRI 特别版）的开关和小修补（从 DSH 版 blue whale 的 pet.js / vad-mirror.js 搬过来）
 #   PetLauncher：AstrBot 启动时打开桌宠，关掉时一起关；桌宠已经开着就不重复打开
-#   patch_pet：打开桌宠前对 app.asar 做「同样长度原位替换」，和 DSH 版完全一样（两边共用记号文件）
+#   patch_pet：打开桌宠前对 app.asar 做「同样长度原位替换」（比 DSH 版多一条：不显示思考中的三点气泡）
 #   ModelServer：本机 18101 提供语音检测模型，国内不用连 huggingface.co
 import asyncio
 import ctypes
@@ -159,6 +159,12 @@ CORNER_NEW = (
 )
 
 
+# 不要「思考中」的三个点小气泡：桌宠在等回复时，角色头上会冒出一个三点气泡（presence bubble 的 thinking 状态）
+#   改成永远显示「空闲」状态，就不会出现；未读数气泡不受影响
+THINKING_OLD = "const chatPresence = computed(() => chatSending.value ? presenceBubbleThinking : presenceBubbleIdle);"
+THINKING_NEW = "const chatPresence = computed(() => presenceBubbleIdle);"
+
+
 def _same_length(name: str, old: str, new: str) -> tuple[str, bytes, bytes]:
     f, t = old.encode(), new.encode()
     short = len(f) - len(t)
@@ -174,6 +180,7 @@ PET_PATCHES = [
     _same_length("屏幕边缘不再抢鼠标", BORDER_OLD, BORDER_NEW),
     _same_length("托盘显示/隐藏能隐藏", TRAY_OLD, TRAY_NEW),
     _same_length("屏幕四个角也点得穿", CORNER_OLD, CORNER_NEW),
+    _same_length("不显示思考中的三点气泡", THINKING_OLD, THINKING_NEW),
 ]
 
 
@@ -196,12 +203,12 @@ def _find_all(fh, size: int, needles: list[bytes]) -> list[list[int]]:
 
 
 def patch_pet(airi_exe: str) -> None:
-    """打开桌宠前修补；已经改过的跳过。记号文件和 DSH 版共用（.patches-v4）"""
+    """打开桌宠前修补；已经改过的跳过。记号文件 .patches-v5（加了新的修补就要换一个版本号，不然会被当成已经修补过）"""
     asar = Path(airi_exe).parent / "resources" / "app.asar"
     if not asar.exists():
         logger.warning(f"{TAG} 找不到桌宠的 app.asar，跳过修补：{asar}")
         return
-    mark = Path(str(asar) + ".patches-v4")
+    mark = Path(str(asar) + ".patches-v5")
 
     def stamp() -> str:
         st = asar.stat()

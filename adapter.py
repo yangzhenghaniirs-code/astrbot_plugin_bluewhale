@@ -33,6 +33,7 @@ from .route import (
     vision_parts,
 )
 from .speech import speakable, split_sentences
+from .tts import TTSError, synthesize
 
 TAG = "[blue whale]"
 ADAPTER = "bluewhale"
@@ -275,6 +276,8 @@ class BlueWhaleAdapter(Platform):
                 resp = web.json_response({"object": "list", "data": [{"id": MODEL, "object": "model", "created": 0, "owned_by": "astrbot-bluewhale"}]})
             elif req.method == "POST" and api == "/chat/completions":
                 resp = await self._chat_completions(req)
+            elif req.method == "POST" and api == "/audio/speech":
+                resp = await self._speech(req)
             elif req.method == "GET" and path == "/dafei/sessions":
                 resp = web.json_response(await self._list_sessions())
             elif req.method == "POST" and path == "/dafei/session":
@@ -341,6 +344,36 @@ class BlueWhaleAdapter(Platform):
         except ConnectionResetError:
             pass
         return resp
+
+    async def _speech(self, req: web.Request) -> web.Response:
+        # 桌宠的「OpenAI 兼容 TTS」会把要念的字发到这里：转给百炼 CosyVoice（克隆音色），返回 mp3
+        err = lambda msg, status: web.json_response({"error": {"message": msg, "type": "tts_error"}}, status=status)
+        if not SHARED.get("tts_enabled"):
+            return err("插件里没打开语音合成（插件配置 → 语音合成）", 503)
+        try:
+            body = json.loads(await req.text() or "{}")
+        except Exception:
+            return err("Invalid JSON body", 400)
+        text = str(body.get("input") or "")
+        # 桌宠请求里的 voice 如果本身就是 cosyvoice 音色 ID 就用它，否则用插件里设置的
+        asked = str(body.get("voice") or "")
+        voice = asked if asked.startswith("cosyvoice-") or asked.startswith("qwen-") else SHARED.get("tts_voice", "")
+        try:
+            audio = await synthesize(
+                text,
+                api_key=SHARED.get("tts_api_key", ""),
+                model=SHARED.get("tts_model", "cosyvoice-v3.5-flash"),
+                voice=voice,
+                host=SHARED.get("tts_host", ""),
+            )
+        except TTSError as e:
+            logger.error(f"{TAG} ✗ 语音合成出错：{e}")
+            return err(str(e), 502)
+        except Exception as e:
+            logger.error(f"{TAG} ✗ 语音合成出错：{type(e).__name__}", exc_info=True)
+            return err("internal error", 500)
+        logger.info(f"{TAG} 🔊 合成 {len(text)} 字 → {len(audio) // 1024}KB")
+        return web.Response(body=audio, content_type="audio/mpeg")
 
     async def _list_sessions(self) -> dict:
         ctx = SHARED.get("context")

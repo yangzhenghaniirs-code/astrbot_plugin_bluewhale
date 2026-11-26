@@ -6,9 +6,10 @@ desc: |
   - AstrBot 打开时自动叫出桌宠，关掉时一起关；第一次使用自动下载桌宠程序（约 485MB，先 Gitee 后 GitHub，核对指纹）
   - 对桌宠打字或用麦克风说话，由 AstrBot 回答（人格、记忆、其他插件都生效），回复带表情动作、换装、跳舞
   - 桌宠在 AstrBot 里是一个聊天平台「blue whale 桌宠」，装上自动添加；分段回复一段一个气泡
+  - 语音合成可用百炼 CosyVoice 克隆音色（可选，需自己的百炼 API Key）
   - 只支持 Windows
 author: 游川鱼
-version: 0.1.0
+version: 0.2.0
 repo: https://github.com/yangzhenghaniirs-code/astrbot_plugin_bluewhale
 astrbot_version: ">=4.29,<5"
 tags:
